@@ -1,0 +1,148 @@
+---
+title: "Fun with animated plotting in R"
+output: 
+  learnr::tutorial:
+     progressive: false
+runtime: shiny_prerendered
+description: >
+  Animated plotting in R with 'animate'
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+## Introduction
+
+Welcome to "Fun with animated plotting in R with 'animate'"!
+
+In this series of articles, we will do some exercises with animated plotting in R and have some fun playing with art, coding and mathematics.
+
+
+### The R package 'animate'
+
+'animate' is ...
+
+#### Set up a device in the R Markdown Document
+
+```{r two-plus-two, exercise=TRUE}
+# Load and set up the device
+library(animate)
+device <- animate$new(500, 500, virtual = TRUE)
+attach(device)
+
+# Create some data
+id <- new_id(1:10)
+s <- 1:10 * 2 * pi / 10
+s2 <- sample(s)
+
+# Make an 'animate' plot
+par(xlim = c(-2.5, 2.5), ylim = c(-2.5, 2.5))
+plot(2*sin(s), 2*cos(s), id = id)
+points(sin(s2), cos(s2), id = id, transition = list(duration = 2000))
+
+# Render the plot in-line. This line is needed if you use 'animate' in a code chunk of an R Markdown Document.
+rmd_animate(device, click_to_play(start = 3))  # begin the plot at the third frame
+```
+
+
+
+
+
+
+## Day 1: Mathematical Rose
+
+### Set up the device
+
+```{r day-2-device-setup, exercise=T, message=F, warning=F}
+library(animate)
+device <- animate$new(600, 600, virtual = TRUE)
+attach(device)
+set_max_stacksize(0)
+
+
+rose <- function(theta, a = 1, k = 3) {
+    # `a` controls the size, `k` controls the shape
+    list(x = a * cos(k * theta) * cos(theta),
+         y = a * cos(k * theta) * sin(theta))
+}
+
+# k = p / q, where p and q should be coprime, e.g. 1/3, 2/7, not 2/6, 3/6.
+# If p and q are not coprime, then the rose will be drawn more than once.
+p <- 2
+q <- 7
+
+
+is_odd <- function(x) x %% 2 == 1
+period <- ifelse(is_odd(p) && is_odd(q), pi * q, 2 * pi * q)
+
+# Compute the rose with the parameters `p` and `q` for time=0 to time=`period`
+time <- seq(from = 0, to = period, length.out = 400)  # 400 time steps
+pts <- rose(time, a = 1, k = p / q)
+
+
+par(xlim = extendrange(pts$x), ylim = extendrange(pts$y))
+for (step in seq_along(time)) {
+    lines(pts$x[1:step], pts$y[1:step], id = "line-1")
+    points(pts$x[step], pts$y[step], id = "point-1")
+    # Sys.sleep(0.01)
+}
+rmd_animate(device, click_to_loop(start = 3, wait = 10))
+```
+
+
+### Implement the rose function
+
+Some calculation is needed to work out the number of time steps required to get to the end of the drawing of the rose. Assuming $p$ and $q$ are coprime, then the period is $\pi q$ if both $p$ and $q$ are odd, and $2 \pi q$ otherwise.
+
+### Plot the rose 
+
+### Clean up 
+
+
+
+
+
+
+
+## Day 2
+
+### Perlin noise
+
+```{r perlin-noise, exercise=TRUE, exercise.lines = 5}
+# smooth_step <- function(x, edge_0, edge_1) {
+#   x <- clamp((x - edge_0) / (edge_1 - edge_0), 0, 1)
+#   x * x * (3 - 2*x)
+# }
+# 
+# clamp <- function(x, lower_limit, upper_limit) {
+#   if (x < lower_limit) return(lower_limit)
+#   if (x > upper_limit) return(upper_limit)
+#   x
+# }
+# 
+# general_smooth_step <- function(x, m) {
+#   x <- clamp(x, 0, 1)
+#   result <- 0
+#   for (n in 0:m) {
+#     result <- result + choose(-m-1, n) * choose(2*m+1, m-n) * x^(m+n+1)
+#   }
+#   result
+# }
+# 
+# perlin_noise <- function() {
+#   
+# }
+# 
+# runif()
+```
+
+
+
+
+
+
+
+
